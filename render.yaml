@@ -14,9 +14,9 @@ services:
       - key: PORT
         value: "5000"
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://gnxt:gnxt%40123@cluster0.bnjgcin.mongodb.net/gnxt?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
-        sync: false
+        value: gnxt_super_secret_2026
       - key: JWT_EXPIRES
         value: 7d
       - key: CORS_ORIGIN
@@ -26,6 +26,6 @@ services:
       - key: SMTP_PORT
         value: "465"
       - key: SMTP_USER
-        sync: false
+        value: divyamadhuratech@gmail.com
       - key: SMTP_PASS
         sync: false
