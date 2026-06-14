@@ -81,6 +81,9 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use("/uploads", express.static(path.join(path.dirname(__dirname), "uploads")));
 
+// Attach io instance to every request so controllers can emit socket events
+app.use((req, res, next) => { req.io = io; next(); });
+
 
 connectDB();
 

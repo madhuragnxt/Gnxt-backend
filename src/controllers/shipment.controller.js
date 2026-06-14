@@ -110,6 +110,8 @@ export const createShipment = async (req, res) => {
     // Mark driver as Assigned
     await Driver.findByIdAndUpdate(driverId, { tripStatus: "Assigned", assignedVehicle: vehicle.vehicleNo });
 
+    if (req.io) req.io.emit("shipments:changed");
+
     res.status(201).json({ success: true, message: "Shipment created", data: shipment });
   } catch (err) {
     console.error("Create shipment error:", err);
@@ -296,7 +298,7 @@ export const updateShipmentStatus = async (req, res) => {
       status,
       ...(status === "Delivered" ? { deliveryDate: new Date() } : {}),
       ...(status === "In Transit" ? { dispatchDate: manualDispatchDate ? new Date(manualDispatchDate) : new Date() } : {}),
-      ...(status === "Closed" ? { returnedDate: manualReturnedDate ? new Date(manualReturnedDate) : new Date() } : {}),
+      ...(status === "Closed" && manualReturnedDate ? { returnedDate: new Date(manualReturnedDate) } : {}),
       ...(podReceiverName !== undefined ? { podReceiverName } : {}),
       ...(podRemarks !== undefined ? { podRemarks } : {}),
       ...(podImages !== undefined ? { podImages } : {}),
@@ -312,7 +314,8 @@ export const updateShipmentStatus = async (req, res) => {
       .lean();
     if (!shipment) return res.status(404).json({ success: false, message: "Shipment not found" });
 
-    if (status === "Closed" || status === "Cancelled") {
+    // Only release vehicle/driver when explicitly returnedDate is provided (manual arrival)
+    if (manualReturnedDate || status === "Cancelled") {
       const vId = shipment.vehicleId?._id || shipment.vehicleId;
       const dId = shipment.driverId?._id || shipment.driverId;
 
@@ -383,6 +386,11 @@ export const updateShipmentStatus = async (req, res) => {
         { plantReferenceNumber: { $in: allPlantNumbers } },
         updateData
       );
+    }
+
+    if (req.io) {
+      req.io.emit("shipments:changed");
+      req.io.emit("invoices:changed");
     }
 
     res.status(200).json({ success: true, message: "Status updated", data: shipment });
@@ -543,6 +551,9 @@ export const updateShipment = async (req, res) => {
       .populate("vehicleId", "vehicleNo type model capacityKg")
       .populate("driverId", "name phone licenseNumber driverType")
       .lean();
+
+    if (req.io) req.io.emit("shipments:changed");
+
     res.status(200).json({ success: true, message: "Shipment updated", data: shipment });
   } catch (err) {
     console.error("Update shipment error:", err);
@@ -611,6 +622,8 @@ export const deleteShipment = async (req, res) => {
         await Invoice.updateMany({ _id: { $in: invoicesToRevert } }, { status: "Pending" });
       }
     }
+
+    if (req.io) req.io.emit("shipments:changed");
 
     res.status(200).json({ success: true, message: "Shipment deleted" });
   } catch (err) {

@@ -63,6 +63,8 @@ try {
   }
 }
 
+if (req.io) req.io.emit("invoices:changed");
+
 res.json({
   success: true,
   data: {
@@ -177,10 +179,11 @@ export const getInvoices = async (req, res) => {
       }
 
       groupedMap.get(key).invoices.push({
-          _id: inv._id,
+        _id: inv._id,
         invoiceNumber: inv.invoiceNumber,
         invoiceDate: inv.invoiceDate,
         isChecked: inv.isChecked,
+        status: inv.status,
       });
     });
 
@@ -239,10 +242,18 @@ export const updateInvoiceStatus = async (req, res) => {
       updateData.cancelledAt = null;
     }
 
-    await Invoice.updateMany(
-      { plantReferenceNumber: plantId },
-      updateData
-    );
+    // If plantId is a valid 24-char MongoDB ObjectId, update only that specific invoice
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(plantId);
+    if (isObjectId) {
+      await Invoice.findByIdAndUpdate(plantId, updateData);
+    } else {
+      await Invoice.updateMany(
+        { plantReferenceNumber: plantId },
+        updateData
+      );
+    }
+
+    if (req.io) req.io.emit("invoices:changed");
 
     res.json({
       success: true,
@@ -277,6 +288,8 @@ export const toggleInvoiceCheck = async (req, res) => {
 
     await invoice.save();
 
+    if (req.io) req.io.emit("invoices:changed");
+
     res.json({
       success: true,
       data: invoice,
@@ -297,6 +310,8 @@ export const deleteInvoice = async (req, res) => {
 
     // Example for MongoDB
     await Invoice.findByIdAndDelete(invoiceId);
+
+    if (req.io) req.io.emit("invoices:changed");
 
     res.status(200).json({
       success: true,
@@ -401,6 +416,7 @@ export const getInvoiceHistory = async (req, res) => {
         invoiceDate: inv.invoiceDate,
         deliveredAt: inv.deliveredAt,
         cancelledAt: inv.cancelledAt,
+        status: inv.status,
       });
     });
 
@@ -455,6 +471,8 @@ export const addInvoice = async (req, res) => {
     });
 
     await newInvoice.save();
+
+    if (req.io) req.io.emit("invoices:changed");
 
     res.status(201).json({
       success: true,
