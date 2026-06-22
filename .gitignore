@@ -1,0 +1,8 @@
+node_modules/
+.env
+dist/
+gnxt.txt
+test*.js
+test*.cjs
+fix*.js
+fixInvoices.cjs
