@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function run() {
-  const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/gnxt";
+  const uri = process.env.MONGO_URI;
   console.log("Attempting to connect to:", uri);
   try {
     await mongoose.connect(uri);

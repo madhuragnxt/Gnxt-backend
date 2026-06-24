@@ -31,7 +31,7 @@ Render auto-deploys from the `main` branch.
 |----------|-------|---------|
 | `NODE_ENV` | `production` | No |
 | `PORT` | `5000` | No |
-| `MONGO_URI` | `mongodb+srv://gnxt:gnxt%40123@cluster0.bnjgcin.mongodb.net/gnxt?retryWrites=true&w=majority&appName=Cluster0` | **Yes** |
+| `MONGO_URI` | *(set in Render Dashboard — see `.env.example` for format)* | **Yes** |
 | `JWT_SECRET` | `gnxt_super_secret_2026` | **Yes** |
 | `JWT_EXPIRES` | `7d` | No |
 | `CORS_ORIGIN` | `https://gnxt.vercel.app` | No |
