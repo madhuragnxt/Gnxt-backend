@@ -10,7 +10,7 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 10000,
     });
-    console.log("MongoDB Connected");
+    console.log("MongoDB Connected",process.env.MONGO_URI);
     await autoSeedSuperAdmin();
   } catch (error) {
     console.error("DB Error:", error.message);
