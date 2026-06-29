@@ -42,7 +42,6 @@ const envOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map(s => s.trim())
   : [];
 const corsOrigin = function (origin, cb) {
-  // Allow requests with no origin (server-to-server, Postman, etc.)
   if (!origin) return cb(null, true);
   const allowed = [
     "http://localhost:5173",
@@ -51,7 +50,9 @@ const corsOrigin = function (origin, cb) {
     "https://backend-zm55.onrender.com",
     ...envOrigins,
   ];
-  cb(null, allowed.includes(origin));
+  if (allowed.includes(origin)) return cb(null, true);
+  if (/^https:\/\/gnxt-[\w-]+\.vercel\.app$/.test(origin)) return cb(null, true);
+  cb(null, false);
 };
 
 /* ── Socket.io ─────────────────────────────────── */
