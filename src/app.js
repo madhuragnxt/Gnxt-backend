@@ -31,6 +31,7 @@ const __dirname = path.dirname(__filename);
 
 
 dotenv.config();
+dotenv.config({ path: path.join(__dirname, "..", ".env.production"), override: false });
 
 const app = express();
 app.set("trust proxy", 1);

@@ -2,7 +2,7 @@ services:
   - type: web
     name: gnxt-backend
     runtime: node
-    repo: https://github.com/madhuragnxt/Gnxt-backend
+    repo: https://github.com/killer0708-dev/backend.git
     branch: main
     plan: free
     healthCheckPath: /health
