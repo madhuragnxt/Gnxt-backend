@@ -38,9 +38,21 @@ app.set("trust proxy", 1);
 const httpServer = createServer(app);   // wrap express in http.Server
 
 /* ── CORS origin ──────────────────────────────── */
-const corsOrigin = process.env.CORS_ORIGIN
+const envOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map(s => s.trim())
-  : "*";
+  : [];
+const corsOrigin = function (origin, cb) {
+  // Allow requests with no origin (server-to-server, Postman, etc.)
+  if (!origin) return cb(null, true);
+  const allowed = [
+    "http://localhost:5173",
+    "http://localhost:5000",
+    "https://gnxt-v1.vercel.app",
+    "https://backend-46iu.onrender.com",
+    ...envOrigins,
+  ];
+  cb(null, allowed.includes(origin));
+};
 
 /* ── Socket.io ─────────────────────────────────── */
 const io = new Server(httpServer, {
