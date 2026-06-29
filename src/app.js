@@ -47,8 +47,8 @@ const corsOrigin = function (origin, cb) {
   const allowed = [
     "http://localhost:5173",
     "http://localhost:5000",
-    "https://gnxt-v1.vercel.app",
-    "https://backend-46iu.onrender.com",
+    "https://gnxt.vercel.app",
+    "https://backend-zm55.onrender.com",
     ...envOrigins,
   ];
   cb(null, allowed.includes(origin));
