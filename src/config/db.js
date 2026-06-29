@@ -22,10 +22,10 @@ const connectDB = async () => {
       console.warn("⚠️ MongoDB connection error suppressed:", err.message.substring(0, 100));
     });
 
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(process.env.MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,
     });
-    console.log("MongoDB Connected",process.env.MONGO_URI);
+    console.log("MongoDB Connected",process.env.MONGODB_URI);
     await autoSeedSuperAdmin();
   } catch (error) {
     console.error("DB Error:", error.message);

@@ -110,7 +110,7 @@ app.use(session({
   saveUninitialized: false,
   rolling: true,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
+    mongoUrl: process.env.MONGODB_URI,
     collectionName: "sessions",
     ttl: 365 * 24 * 60 * 60, // 365 days
     touchAfter: 24 * 60 * 60, // only touch session once per 24h to reduce DB writes
